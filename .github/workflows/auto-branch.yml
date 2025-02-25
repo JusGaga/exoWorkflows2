@@ -1,0 +1,19 @@
+name: Auto Create Feature Branch
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create branch
+        run: |
+          BRANCH_NAME="features/${{ github.event.issue.title }}"
+          git checkout develop
+          git checkout -b $BRANCH_NAME
+          git push origin $BRANCH_NAME
