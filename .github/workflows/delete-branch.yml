@@ -1,0 +1,17 @@
+name: Delete Merged Branch
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  delete-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete branch if merged
+        run: |
+          BRANCH_NAME=${{ github.event.pull_request.head.ref }}
+          if [[ $BRANCH_NAME == features/* || $BRANCH_NAME == hotfix/* ]]; then
+            git push origin --delete $BRANCH_NAME
+          fi
