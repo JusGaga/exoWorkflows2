@@ -1,0 +1,17 @@
+name: Conventional Commits Check
+
+on:
+  push:
+    branches:
+      - 'features/**'
+      - 'hotfix/**'
+
+jobs:
+  commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate commit messages
+        uses: webiny/action-conventional-commits@v1.3.0
