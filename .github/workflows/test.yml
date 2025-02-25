@@ -18,7 +18,7 @@ jobs:
       - name: Check if PR is from a feature branch
         id: check_branch
         run: |
-          if [[ "${{ github.head_ref }}" =~ ^feature/.*$ ]]; then
+          if [[ "${{ github.head_ref }}" =~ ^features/.*$ ]]; then
             echo "is_feature_branch=true" >> $GITHUB_ENV
           else
             echo "is_feature_branch=false" >> $GITHUB_ENV
