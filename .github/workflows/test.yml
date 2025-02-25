@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run Tests on Feature PRs
 
 on:
   pull_request:
@@ -7,15 +7,33 @@ on:
     types:
       - opened
       - synchronize
+      - reopened
 
 jobs:
+  check-branch:
+    runs-on: ubuntu-latest
+    outputs:
+      is_feature_branch: ${{ steps.check_branch.outputs.is_feature_branch }}
+    steps:
+      - name: Check if PR is from a feature branch
+        id: check_branch
+        run: |
+          if [[ "${{ github.head_ref }}" =~ ^feature/.*$ ]]; then
+            echo "is_feature_branch=true" >> $GITHUB_ENV
+          else
+            echo "is_feature_branch=false" >> $GITHUB_ENV
+          fi
+
   test:
+    needs: check-branch
+    if: needs.check-branch.outputs.is_feature_branch == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18, 20]
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -32,6 +50,5 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage_Node${{ matrix.node-version }}
+          name: coverage_Node${{ matrix.node-version }}.txt
           path: coverage_Node${{ matrix.node-version }}.txt
-
