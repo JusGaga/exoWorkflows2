@@ -19,14 +19,14 @@ jobs:
         id: check_branch
         run: |
           if [[ "${{ github.head_ref }}" =~ ^features/.*$ ]]; then
-            echo "is_feature_branch=true" >> $GITHUB_ENV
+            echo "is_feature_branch=true" >> $GITHUB_OUTPUT
           else
-            echo "is_feature_branch=false" >> $GITHUB_ENV
+            echo "is_feature_branch=false" >> $GITHUB_OUTPUT
           fi
 
   test:
     needs: check-branch
-    if: needs.check-branch.outputs.is_feature_branch == 'true'
+    if: always() && needs.check-branch.outputs.is_feature_branch == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
