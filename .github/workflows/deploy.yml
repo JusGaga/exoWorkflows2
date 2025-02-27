@@ -1,0 +1,63 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Build de l'image Docker
+        run: |
+          docker build -t test:latest .
+
+      - name: Nettoyer les anciennes images Docker
+        run: |
+          docker image prune -f
+
+      - name: Vérifier l'exécution de l'application
+        run: |
+          docker run --rm test:latest
+
+  deploy-staging:
+    needs: build-and-test
+    runs-on: self-hosted
+    environment: staging
+    steps:
+      - name: Vérifier si le conteneur tourne déjà
+        run: |
+          if [ "$(docker ps -q -f name=app-test)" ]; then
+            echo "Le conteneur existe, on le redémarre..."
+            docker stop app-test
+            docker rm app-test
+          else
+            echo "Aucun conteneur trouvé, on en lance un nouveau."
+          fi
+
+      - name: Déployer en Staging
+        run: |
+          docker run -d --name app-test test:latest
+
+  deploy-production:
+    needs: deploy-staging
+    runs-on: self-hosted
+    environment: production
+    steps:
+      - name: Vérifier si le conteneur tourne déjà
+        run: |
+          if [ "$(docker ps -q -f name=app-test)" ]; then
+            echo "Le conteneur existe, on le redémarre..."
+            docker stop app-test
+            docker rm app-test
+          else
+            echo "Aucun conteneur trouvé, on en lance un nouveau."
+          fi
+
+      - name: Déployer en Production
+        run: |
+          docker run -d --name app-test test:latest
