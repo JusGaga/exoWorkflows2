@@ -29,16 +29,18 @@ jobs:
     runs-on: self-hosted
     environment: staging
     steps:
-      - name: Vérifier si le conteneur tourne déjà
-        shell: bash
+      - name: Vérifier si le conteneur tourne déjà (PowerShell)
         run: |
-          if [ "$(docker ps -q -f name=app-test)" ]; then
-            echo "Le conteneur existe, on le redémarre..."
+          $containerId = docker ps -q -f "name=app-test"
+          if ($containerId) {
+            Write-Host "Le conteneur existe, on le redémarre..."
             docker stop app-test
             docker rm app-test
-          else
-            echo "Aucun conteneur trouvé, on en lance un nouveau."
-          fi
+          } else {
+            Write-Host "Aucun conteneur trouvé, on en lance un nouveau."
+          }
+        shell: pwsh
+
 
       - name: Déployer en Staging
         run: |
@@ -49,16 +51,18 @@ jobs:
     runs-on: self-hosted
     environment: production
     steps:
-      - name: Vérifier si le conteneur tourne déjà
-        shell: bash
+      - name: Vérifier si le conteneur tourne déjà (PowerShell)
         run: |
-          if [ "$(docker ps -q -f name=app-test)" ]; then
-            echo "Le conteneur existe, on le redémarre..."
+          $containerId = docker ps -q -f "name=app-test"
+          if ($containerId) {
+            Write-Host "Le conteneur existe, on le redémarre..."
             docker stop app-test
             docker rm app-test
-          else
-            echo "Aucun conteneur trouvé, on en lance un nouveau."
-          fi
+          } else {
+            Write-Host "Aucun conteneur trouvé, on en lance un nouveau."
+          }
+        shell: pwsh
+
 
       - name: Déployer en Production
         run: |
