@@ -29,18 +29,18 @@ jobs:
     runs-on: self-hosted
     environment: staging
     steps:
-      - name: Vérifier si le conteneur tourne déjà (PowerShell)
+      - name: Vérifier si le conteneur tourne déjà
+        shell: cmd
         run: |
-          $containerId = docker ps -q -f "name=app-test"
-          if ($containerId) {
-            Write-Host "Le conteneur existe, on le redémarre..."
+          @echo off
+          for /f "tokens=*" %%i in ('docker ps -q -f "name=app-test"') do set CONTAINER_ID=%%i
+          if defined CONTAINER_ID (
+            echo Le conteneur existe, on le redémarre...
             docker stop app-test
             docker rm app-test
-          } else {
-            Write-Host "Aucun conteneur trouvé, on en lance un nouveau."
-          }
-        shell: pwsh
-
+          ) else (
+            echo Aucun conteneur trouvé, on en lance un nouveau.
+          )
 
       - name: Déployer en Staging
         run: |
@@ -51,18 +51,18 @@ jobs:
     runs-on: self-hosted
     environment: production
     steps:
-      - name: Vérifier si le conteneur tourne déjà (PowerShell)
+      - name: Vérifier si le conteneur tourne déjà
+        shell: cmd
         run: |
-          $containerId = docker ps -q -f "name=app-test"
-          if ($containerId) {
-            Write-Host "Le conteneur existe, on le redémarre..."
+          @echo off
+          for /f "tokens=*" %%i in ('docker ps -q -f "name=app-test"') do set CONTAINER_ID=%%i
+          if defined CONTAINER_ID (
+            echo Le conteneur existe, on le redémarre...
             docker stop app-test
             docker rm app-test
-          } else {
-            Write-Host "Aucun conteneur trouvé, on en lance un nouveau."
-          }
-        shell: pwsh
-
+          ) else (
+            echo Aucun conteneur trouvé, on en lance un nouveau.
+          )
 
       - name: Déployer en Production
         run: |
