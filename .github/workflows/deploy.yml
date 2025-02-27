@@ -30,6 +30,7 @@ jobs:
     environment: staging
     steps:
       - name: Vérifier si le conteneur tourne déjà
+        shell: bash
         run: |
           if [ "$(docker ps -q -f name=app-test)" ]; then
             echo "Le conteneur existe, on le redémarre..."
@@ -49,6 +50,7 @@ jobs:
     environment: production
     steps:
       - name: Vérifier si le conteneur tourne déjà
+        shell: bash
         run: |
           if [ "$(docker ps -q -f name=app-test)" ]; then
             echo "Le conteneur existe, on le redémarre..."
