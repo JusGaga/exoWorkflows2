@@ -6,7 +6,7 @@ if [ -z "$GITHUB_TOKEN" ]; then
   exit 1
 fi
 
-# Récupérer la dernière version
+# Récupérer la dernière version ou initialiser à 0.0.0
 if [ ! -f .version ]; then
   echo "0.0.0" > .version
 fi
@@ -45,7 +45,5 @@ git add .version CHANGELOG.md
 git commit -m "chore(release): bump version to $NEW_VERSION"
 
 # Création du tag et push
-NEW_VERSION=$(cat .version)
 git tag -a "v$NEW_VERSION" -m "Version $NEW_VERSION"
 git push origin "v$NEW_VERSION"
-
