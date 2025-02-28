@@ -71,7 +71,14 @@ else
   git commit -m "chore(release): bump version to $NEW_VERSION"
 fi
 
-# Création du tag et push
+# Vérifier si le tag existe déjà et le supprimer si nécessaire
+if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
+  echo "⚠️ Tag v$NEW_VERSION existe déjà, suppression en cours..."
+  git tag -d "v$NEW_VERSION"  # Supprime le tag en local
+  git push --delete origin "v$NEW_VERSION" || true  # Supprime le tag sur GitHub
+fi
+
+# Création du nouveau tag et push
 git tag -a "v$NEW_VERSION" -m "Version $NEW_VERSION"
 git push origin "v$NEW_VERSION"
 
