@@ -21,6 +21,11 @@ jobs:
       - name: Install dependencies (si projet Node.js)
         run: npm install
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Bump version and update changelog
         run: |
           chmod +x scripts/bump_version.sh
@@ -30,11 +35,11 @@ jobs:
 
       - name: Push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           git commit -m "chore: bump version and update changelog [skip ci]"
           git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
