@@ -41,7 +41,7 @@ jobs:
         run: |
           git add .
           git commit -m "chore: bump version to ${{ env.VERSION }} and update changelog [skip ci]"
-          git push origin main
+          git push origin master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
