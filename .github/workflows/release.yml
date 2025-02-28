@@ -33,19 +33,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Read version
+        id: get_version
+        run: echo "VERSION=$(cat .version)" >> $GITHUB_ENV
+
       - name: Push changes
         run: |
           git add .
-          git commit -m "chore: bump version and update changelog [skip ci]"
+          git commit -m "chore: bump version to ${{ env.VERSION }} and update changelog [skip ci]"
           git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Git Tag
+        run: |
+          git tag -a "v${{ env.VERSION }}" -m "Version ${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v$(cat .version)
-          name: "Release v$(cat .version)"
+          tag_name: v${{ env.VERSION }}
+          name: "Release v${{ env.VERSION }}"
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
